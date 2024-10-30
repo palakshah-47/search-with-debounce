@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import './styles.css';
 import { debounce } from './utils';
 
@@ -53,7 +53,7 @@ export default function App() {
   const getSuggestions = async (value: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`search?q=${value}`);
+      const response = await fetch(`search?q=${query}`);
       const result = await response.json();
       if (Array.isArray(result.results)) {
         setData(result.results);
@@ -67,19 +67,14 @@ export default function App() {
     }
   };
 
-  const onInput = (e) => {
-    if (!e.target.value) setQuery('');
-    setQuery(e.target.value);
-  };
-
+  const onInput =
+    // if (!e.target.value) setQuery('');
+    debounce((val) => setQuery(val), 1000);
   const debouncedSuggestion = useCallback(debounce(getSuggestions, 1000), []);
 
   useEffect(() => {
-    // if (query.length >= 1) {
-    debouncedSuggestion(query);
-    // } else {
-    //   setData([]);
-    // }
+    // debouncedSuggestion(query);
+    getSuggestions(query);
   }, [query]);
 
   return (
@@ -87,8 +82,8 @@ export default function App() {
       <input
         type="text"
         placeholder="Search (e.g. pikachu, meta)"
-        value={query}
-        onInput={onInput}
+        // value={query}
+        onInput={(e: ChangeEvent<HTMLInputElement>) => onInput(e.target.value)}
       />
       {loading && <div>Loading...</div>}
       {!loading && !query && <div>Type something to search</div>}
