@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import './styles.css';
-import { debounce } from './utils';
+// import { debounce } from './utils';
 
 interface IPokemon {
   name: string;
@@ -22,34 +22,19 @@ export default function App() {
   const [data, setData] = useState<IPokemon[]>([]);
   const [loading, setLoading] = useState(false);
 
-  //   const debounce = (
-  //     callback: (...args1: string[]) => unknown,
-  //     delay: number
-  //   ) => {
-  //     let timeoutId: any;
-  //     return (...args: string[]) => {
-  //       clearTimeout(timeoutId);
-  //       timeoutId = setTimeout(() => {
-  //         console.log(...args);
-  //         callback.apply(this, ...args);
-  //       }, delay);
-  //     };
-  //   };
-
-  //   useEffect(
-  //     debounce(async () => {
-  //       setLoading(true);
-  //       fetch(`search?q=${query}`)
-  //         .then((res) => res.json())
-  //         .then((response) => {
-  //           setData(response);
-  //           setLoading(false);
-  //         });
-  //     }, 5000),
-  //     [query]
-  //   );
-
-  //   useEffect(() => {
+  const debounce = (
+    callback: (...args1: string[]) => unknown,
+    delay: number
+  ) => {
+    let timeoutId: any;
+    return (...args: string[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        console.log(...args);
+        callback(...args);
+      }, delay);
+    };
+  };
   const getSuggestions = async (value: string) => {
     setLoading(true);
     try {
